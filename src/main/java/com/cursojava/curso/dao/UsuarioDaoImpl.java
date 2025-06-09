@@ -1,13 +1,14 @@
 package com.cursojava.curso.dao;
 
 import com.cursojava.curso.models.Usuario;
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+
 import java.util.List;
 @Repository
 @Transactional
@@ -25,7 +26,7 @@ public class UsuarioDaoImpl implements UsuarioDao{
     }
 
     /**
-     * @param id
+     * @param id id para borrar
      */
     @Override
     public void eliminar(Long id) {
@@ -34,7 +35,7 @@ public class UsuarioDaoImpl implements UsuarioDao{
     }
 
     /**
-     * @param usuario
+     * @param usuario usuario
      */
     @Override
     public void registrar(Usuario usuario) {
@@ -42,16 +43,25 @@ public class UsuarioDaoImpl implements UsuarioDao{
     }
 
     /**
-     * @param usuario
+     * @param usuario usuario
      */
     @Override
-    public boolean iniciarSesion(Usuario usuario) {
-        String query ="FROM Usuario WHERE email = :email AND password = :pass";
+    public Usuario iniciarSesion(Usuario usuario) {
+        String query ="FROM Usuario WHERE email = :email ";
 
         List<Usuario> list = entityManager.createQuery(query)
                 .setParameter("email", usuario.getEmail())
-                .setParameter("pass", usuario.getPassword())
+
                 .getResultList();
-        return !list.isEmpty();
+        if (list.isEmpty()) {
+            return null;
+        }
+        Usuario u = list.get(0);
+        Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
+        if( argon2.verify(u.getPassword(), usuario.getPassword()))
+           return u;
+
+        return null;
+
     }
 }

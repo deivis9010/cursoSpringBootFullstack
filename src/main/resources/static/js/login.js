@@ -25,8 +25,10 @@ async function iniciarSesion() {
       return respuesta.text();
     })
     .then(respuesta => {
-        if(respuesta === "OK" ){
+        if(respuesta !== "FAIL" ){
             alert("Credenciales OK");
+            localStorage.token = respuesta;
+            localStorage.email = datos.email;
             window.location="usuarios.html"
         }
         else {

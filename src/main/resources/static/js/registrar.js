@@ -32,6 +32,8 @@ async function registrarUsuario() {
       if (!respuesta.ok) {
         throw new Error(`Error en la solicitud: ${respuesta.status}`);
       }
+      alert("Usuario Insertado!!")
+      window.location.href = "login.html";
       return respuesta;
     })
 

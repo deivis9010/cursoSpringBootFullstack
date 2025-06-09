@@ -1,6 +1,6 @@
 
 function cargarUsuarios() {
-  fetch("http://localhost:8080/getlistusuarios")
+  fetch("http://localhost:8080/getlistusuarios",getHeader())
     .then(respuesta => {
       if (!respuesta.ok) {
         throw new Error(`Error en la solicitud: ${respuesta.status}`);
@@ -53,16 +53,10 @@ function cargarUsuarios() {
 }
 
 
-function eliminarUsuario(id) {
+async  function eliminarUsuario(id) {
 
   if (confirm('Desea elimimar?')){
-    fetch("http://localhost:8080/delusuario/"+id,{
-                                                      method: "DELETE",
-                                                      headers: {
-                                                        "Content-Type": "application/json"
-                                                      },
-
-                                                    })
+    fetch("http://localhost:8080/delusuario/"+id, getHeaderE())
          .then(respuesta => {
            if (!respuesta.ok) {
              throw new Error(`Error en la solicitud: ${respuesta.status}`);
@@ -79,10 +73,37 @@ function eliminarUsuario(id) {
 }
 
 
+function getHeader(){
+ return {method: "GET",
+         headers: {
+          "Content-Type": "application/json",
+          "Authorization": localStorage.token
+            },
 
 
+                                                            };
+}
+
+function getHeaderE(){
+ return {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.token
+          },
+           Authorization: localStorage.token
+
+                                                            };
+}
+function actualizarEmailUsuario() {
+    const txtUsername=document.getElementById('txt-username');
+
+    txtUsername.outerHTML = localStorage.email;
+
+}
 // Ejecutar cuando el DOM esté listo
 $(document).ready(function() {
   cargarUsuarios();
+  actualizarEmailUsuario();
 });
 
